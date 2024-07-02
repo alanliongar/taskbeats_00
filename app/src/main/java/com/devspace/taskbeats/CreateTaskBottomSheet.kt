@@ -12,7 +12,8 @@ import android.widget.TextView
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.snackbar.Snackbar
 
-class CreateTaskBottomSheet(private val categoryList: List<CategoryUiData>,
+class CreateTaskBottomSheet(
+    private val categoryList: List<CategoryUiData>,
     private val onCreateClicked: (TaskUiData) -> Unit
 ) : BottomSheetDialogFragment() {
     override fun onCreateView(
@@ -34,7 +35,7 @@ class CreateTaskBottomSheet(private val categoryList: List<CategoryUiData>,
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_item)
             catSpin.adapter = adapter
         }
-        catSpin.onItemSelectedListener = object: AdapterView.OnItemSelectedListener {
+        catSpin.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(
                 parent: AdapterView<*>?,
                 view: View?,
@@ -43,6 +44,7 @@ class CreateTaskBottomSheet(private val categoryList: List<CategoryUiData>,
             ) {
                 taskCategory = categoryStr.get(position)
             }
+
             override fun onNothingSelected(parent: AdapterView<*>?) {
 
             }
@@ -50,7 +52,13 @@ class CreateTaskBottomSheet(private val categoryList: List<CategoryUiData>,
         btnCreate.setOnClickListener {
             if (taskCategory != null) {
                 val name = tieTaskName.text.toString()
-                onCreateClicked.invoke(TaskUiData(name = name, category = requireNotNull(taskCategory)))
+                onCreateClicked.invoke(
+                    TaskUiData(
+                        id = 11,
+                        name = name,
+                        category = requireNotNull(taskCategory)
+                    )
+                )
             } else {
                 Snackbar.make(btnCreate, "Please select a category", Snackbar.LENGTH_LONG).show()
             }

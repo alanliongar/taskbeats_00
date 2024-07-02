@@ -1,17 +1,10 @@
 package com.devspace.taskbeats
-//Onde parei? Terminei aula 10, ver aula 11
+//Onde parei? Terminei aula 11 e parei nos 13:30 da aula 12 - que é click na lista de tarefas. ele vai debugar o código agora.
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.provider.Settings.Global
-import android.service.controls.actions.FloatAction
-import android.util.Log
-import android.widget.Button
-import androidx.core.app.TaskStackBuilder
 import androidx.recyclerview.widget.RecyclerView
 import androidx.room.Room
-import com.comunidadedevspace.taskbeats.R
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -19,7 +12,9 @@ import kotlinx.coroutines.launch
 class MainActivity : AppCompatActivity() {
     private var categoriess = listOf<CategoryUiData>()
     private var taskss = listOf<TaskUiData>()
-
+    private val taskAdapter by lazy{
+        TaskListAdapter()
+    }
     private val categoryAdapter = CategoryListAdapter()
     private val db by lazy {
         Room.databaseBuilder(
@@ -27,7 +22,8 @@ class MainActivity : AppCompatActivity() {
             TaskBeatDataBase::class.java, "database-task-beat"
         ).build()
     }
-//TTT
+
+    //TTT
     private val categoryDao: CategoryDao by lazy {
         db.getCategoryDao()
     }
@@ -46,13 +42,8 @@ class MainActivity : AppCompatActivity() {
         val rvCategory = findViewById<RecyclerView>(R.id.rv_categories)
         val rvTask = findViewById<RecyclerView>(R.id.rv_tasks)
         val fabCreateTask = findViewById<FloatingActionButton>(R.id.fab_create_task)
-        val taskAdapter = TaskListAdapter()
         fabCreateTask.setOnClickListener {
-            val createTaskBottomSheet = CreateTaskBottomSheet(categoriess)
-            { taskToBeCreated ->
-            }
-
-            createTaskBottomSheet.show(supportFragmentManager,"createTaskBottomSheet")
+            showCreateUpdateTaskBottomSheet()
         }
 
         categoryAdapter.setOnClickListener { selected ->
@@ -93,10 +84,15 @@ class MainActivity : AppCompatActivity() {
         GlobalScope.launch(Dispatchers.IO) {
             getCategoriesFromDataBase()
         }
-        //categoryAdapter.submitList(categories)
-
         rvTask.adapter = taskAdapter
-        getTasksFromDataBase(taskAdapter)
+        taskAdapter.setOnClickListener {
+            showCreateUpdateTaskBottomSheet()
+        }
+
+        //categoryAdapter.submitList(categories)
+        GlobalScope.launch(Dispatchers.IO) {
+            getTasksFromDataBase()
+        }
     }
 
     private fun insertDefaultCategory() {
@@ -118,6 +114,7 @@ class MainActivity : AppCompatActivity() {
     private fun insertDefaultTasks() {
         val tasksEntity = tasks.map {
             TaskEntity(
+                id = it.id,
                 name = it.name,
                 category = it.category
             )
@@ -147,19 +144,18 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    private fun getTasksFromDataBase(adapter: TaskListAdapter) {
-        GlobalScope.launch(Dispatchers.IO) {
-            val tasksFromDb: List<TaskEntity> = taskDao.getAll()
-            val tasksUiData = tasksFromDb.map {
-                TaskUiData(
-                    name = it.name,
-                    category = it.category
-                )
-            }.toMutableList()
-            GlobalScope.launch(Dispatchers.Main) {
-                taskss = tasksUiData
-                adapter.submitList(tasksUiData)
-            }
+    private fun getTasksFromDataBase() {
+        val tasksFromDb: List<TaskEntity> = taskDao.getAll()
+        val tasksUiData: List<TaskUiData> = tasksFromDb.map {
+            TaskUiData(
+                id = it.id,
+                name = it.name,
+                category = it.category
+            )
+        }
+        GlobalScope.launch(Dispatchers.Main) {
+            taskss = tasksUiData
+            taskAdapter.submitList(tasksUiData)
         }
     }
 
@@ -168,7 +164,26 @@ class MainActivity : AppCompatActivity() {
             categoryDao.inset(categoryEntity)//ainda precisa atualizar a view pro usuário
             getCategoriesFromDataBase()
         }
+    }
 
+    private fun insertTask(taskEntity: TaskEntity) {
+        GlobalScope.launch(Dispatchers.IO) {
+            taskDao.insert(taskEntity)
+            getTasksFromDataBase()
+        }
+    }
+
+    private fun showCreateUpdateTaskBottomSheet() {
+        val createTaskBottomSheet = CreateTaskBottomSheet(categoriess)
+        { taskToBeCreated ->
+            val taskEntityToBeInsert = TaskEntity(
+                id = taskToBeCreated.id, //cuidado com essa porra
+                name = taskToBeCreated.name,
+                category = taskToBeCreated.category
+            )
+            insertTask(taskEntityToBeInsert)
+        }
+        createTaskBottomSheet.show(supportFragmentManager, "createTaskBottomSheet")
     }
 }
 
@@ -223,47 +238,58 @@ val categories: List<CategoryUiData> = listOf(
 
 val tasks = listOf(
     TaskUiData(
+        0,
         "Ler 10 páginas do livro atual",
-        "STUDY"
+        "STUDY",
     ),
     TaskUiData(
+        1,
         "45 min de treino na academia",
-        "HEALTH"
+        "HEALTH",
     ),
     TaskUiData(
+        2,
         "Correr 5km",
-        "HEALTH"
+        "HEALTH",
     ),
     TaskUiData(
+        3,
         "Meditar por 10 min",
-        "WELLNESS"
+        "WELLNESS",
     ),
     TaskUiData(
+        4,
         "Silêncio total por 5 min",
-        "WELLNESS"
+        "WELLNESS",
     ),
     TaskUiData(
+        5,
         "Descer o livo",
-        "HOME"
+        "HOME",
     ),
     TaskUiData(
+        6,
         "Tirar caixas da garagem",
-        "HOME"
+        "HOME",
     ),
     TaskUiData(
+        7,
         "Lavar o carro",
-        "HOME"
+        "HOME",
     ),
     TaskUiData(
+        8,
         "Gravar aulas DevSpace",
-        "WORK"
+        "WORK",
     ),
     TaskUiData(
+        9,
         "Criar planejamento de vídeos da semana",
-        "WORK"
+        "WORK",
     ),
     TaskUiData(
+        10,
         "Soltar reels da semana",
-        "WORK"
+        "WORK",
     ),
 )
