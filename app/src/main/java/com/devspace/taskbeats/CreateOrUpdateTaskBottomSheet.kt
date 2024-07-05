@@ -12,12 +12,12 @@ import android.widget.TextView
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
-import org.w3c.dom.Text
 
 class CreateOrUpdateTaskBottomSheet(
     private val categoryList: List<CategoryUiData>,
     private val task: TaskUiData? = null,
-    private val onCreateClicked: (TaskUiData) -> Unit
+    private val onCreateClicked: (TaskUiData) -> Unit,
+    private val onUpdateClicked: (TaskUiData) -> Unit
 ) : BottomSheetDialogFragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -56,13 +56,26 @@ class CreateOrUpdateTaskBottomSheet(
         btnCreate.setOnClickListener {
             if (taskCategory != null) {
                 val name = tieTaskName.text.toString()
-                onCreateClicked.invoke(
-                    TaskUiData(
-                        id = 11,
-                        name = name,
-                        category = requireNotNull(taskCategory)
+
+                if (task == null) {
+                    onCreateClicked.invoke(
+                        TaskUiData(
+                            id = 11,
+                            name = name,
+                            category = requireNotNull(taskCategory)
+                        )
                     )
-                )
+                } else {
+                    onUpdateClicked.invoke(
+                        TaskUiData(
+                            id = task.id,
+                            name = name,
+                            category = requireNotNull(taskCategory)
+                        )
+                    )
+                }
+
+
             } else {
                 Snackbar.make(btnCreate, "Please select a category", Snackbar.LENGTH_LONG).show()
             }
@@ -75,14 +88,9 @@ class CreateOrUpdateTaskBottomSheet(
             btnCreate.setText(R.string.update)
             tieTaskName.setText(task.name)
 
-            val currentCategory = categoryList.first{it.name == task.category}
+            val currentCategory = categoryList.first { it.name == task.category }
             catSpin.setSelection(categoryList.indexOf(currentCategory))
-
-
-
         }
-
-//
         return view
     }
 }
