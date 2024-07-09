@@ -3,6 +3,7 @@
     <string name="home_title">Task Beat</string>
     <string name="create_task_title">Create task</string>
     <string name="create">Create</string>
+    <string name="delete">Delete</string>
     <string name="update_task_title">Update task</string>
     <string name="update">Update</string>
 </resources>

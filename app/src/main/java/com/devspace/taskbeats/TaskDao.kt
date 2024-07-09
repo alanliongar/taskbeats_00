@@ -1,6 +1,7 @@
 package com.devspace.taskbeats
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
@@ -8,7 +9,7 @@ import androidx.room.Update
 
 @Dao
 interface TaskDao {
-    @Query("Select * From taskentity")
+    @Query("Select * From taskentity ORDER BY id ASC")
     fun getAll(): List<TaskEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -20,4 +21,6 @@ interface TaskDao {
     @Update
     fun update(taskEntity: TaskEntity)
 
+    @Delete
+    fun delete(taskEntity: TaskEntity)
 }
