@@ -205,7 +205,7 @@ class MainActivity : AppCompatActivity() {
         createTaskBottomSheet.show(supportFragmentManager, "createTaskBottomSheet")
     }
 }
-////
+////Estou Enviando o código
 val categories: List<CategoryUiData> = listOf(
     //Lista vazia pra testar se o dado foi pro DB mesmo.
     CategoryUiData(
