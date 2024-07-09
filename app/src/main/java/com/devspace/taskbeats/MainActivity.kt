@@ -1,5 +1,5 @@
 package com.devspace.taskbeats
-//Onde parei? Terminei aula 13 e devo iniciar a aula 14
+//Onde parei? Terminei aula 15, devo iniciar a 16
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.recyclerview.widget.RecyclerView
@@ -205,7 +205,7 @@ class MainActivity : AppCompatActivity() {
         createTaskBottomSheet.show(supportFragmentManager, "createTaskBottomSheet")
     }
 }
-////Estou Enviando o código
+//
 val categories: List<CategoryUiData> = listOf(
     //Lista vazia pra testar se o dado foi pro DB mesmo.
     CategoryUiData(
