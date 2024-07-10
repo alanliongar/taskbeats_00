@@ -12,10 +12,10 @@ interface TaskDao {
     @Query("Select * From taskentity ORDER BY id ASC")
     fun getAll(): List<TaskEntity>
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     fun insertAll(taskEntity: List<TaskEntity>)
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     fun insert(taskEntity: TaskEntity)
 
     @Update

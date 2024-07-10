@@ -79,11 +79,9 @@ class MainActivity : AppCompatActivity() {
             } else {
                 val categoryTemp = categoriess.map { item ->
                     when {
-                        item.name == selected.name && !item.isSelected -> item.copy(
-                            isSelected = true
-                        )
-
-                        item.name == selected.name && item.isSelected -> item.copy(isSelected = false)
+                        item.name == selected.name && item.isSelected -> item.copy(isSelected = true)
+                        item.name == selected.name && !item.isSelected -> item.copy(isSelected = true)
+                        item.name != selected.name && item.isSelected -> item.copy(isSelected = false)
                         else -> item
                     }
                 }
@@ -165,16 +163,16 @@ class MainActivity : AppCompatActivity() {
             categoriesFromDb.map { //Aqui é o contrário do que está sendo feito na linha 64: estamos pegando do banco de dados e puxando pra lista de novo.
                 CategoryUiData(name = it.name, isSelected = it.isSelected)
             }.toMutableList() //esse tomutablelist serve pro que tá no nome mutablelist
-
         //daqui pra baixo, eu só tô criando o botão de adiçonar
         val list = listOf<CategoryUiData>()
         val mutableList = mutableListOf<CategoryUiData>()
         categoriesUiData.add(CategoryUiData(name = "+", isSelected = false))
+        val tempCategory = mutableListOf(CategoryUiData(name = "ALL", isSelected = true))
+        tempCategory.addAll(categoriesUiData)
         GlobalScope.launch(Dispatchers.Main) {
-            categoriess = categoriesUiData
-            categoryAdapter.submitList(categoriesUiData)
+            categoriess = tempCategory
+            categoryAdapter.submitList(categoriess)
         }
-
     }
 
     private fun getTasksFromDataBase() {
@@ -188,7 +186,7 @@ class MainActivity : AppCompatActivity() {
         }
         GlobalScope.launch(Dispatchers.Main) {
             taskss = tasksUiData
-            taskAdapter.submitList(tasksUiData)
+            taskAdapter.submitList(taskss)
         }
     }
 
@@ -266,10 +264,10 @@ class MainActivity : AppCompatActivity() {
 //
 val categories: List<CategoryUiData> = listOf(
     //Lista vazia pra testar se o dado foi pro DB mesmo.
-    CategoryUiData(
+    /*CategoryUiData(
         name = "ALL",
         isSelected = false
-    ),
+    ),*/
     CategoryUiData(
         name = "STUDY",
         isSelected = false
@@ -301,11 +299,7 @@ val categories: List<CategoryUiData> = listOf(
     CategoryUiData(
         name = "HEALTH",
         isSelected = false
-    ),
-    CategoryUiData(
-        name = "HEALTH",
-        isSelected = false
-    ),
+    )
 )
 
 
