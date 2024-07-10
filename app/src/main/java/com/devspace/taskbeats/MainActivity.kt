@@ -1,5 +1,5 @@
 package com.devspace.taskbeats
-//Onde parei? Terminei aula 11 e parei nos 13:30 da aula 12 - que é click na lista de tarefas. ele vai debugar o código agora.
+//Onde parei? Terminei aula 17, devo iniciar a 18
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.recyclerview.widget.RecyclerView
@@ -12,7 +12,7 @@ import kotlinx.coroutines.launch
 class MainActivity : AppCompatActivity() {
     private var categoriess = listOf<CategoryUiData>()
     private var taskss = listOf<TaskUiData>()
-    private val taskAdapter by lazy{
+    private val taskAdapter by lazy {
         TaskListAdapter()
     }
     private val categoryAdapter = CategoryListAdapter()
@@ -44,6 +44,16 @@ class MainActivity : AppCompatActivity() {
         val fabCreateTask = findViewById<FloatingActionButton>(R.id.fab_create_task)
         fabCreateTask.setOnClickListener {
             showCreateUpdateTaskBottomSheet()
+        }
+
+        taskAdapter.setOnClickListener { task ->
+            showCreateUpdateTaskBottomSheet(task)
+        }
+
+        categoryAdapter.setOnLongClickListener { categoryToBeDeleted ->
+            val categoryEntityToBeDeleted =
+                CategoryEntity(categoryToBeDeleted.name, categoryToBeDeleted.isSelected)
+            deleteCategory(categoryEntityToBeDeleted)
         }
 
         categoryAdapter.setOnClickListener { selected ->
@@ -85,9 +95,7 @@ class MainActivity : AppCompatActivity() {
             getCategoriesFromDataBase()
         }
         rvTask.adapter = taskAdapter
-        taskAdapter.setOnClickListener {
-            showCreateUpdateTaskBottomSheet()
-        }
+
 
         //categoryAdapter.submitList(categories)
         GlobalScope.launch(Dispatchers.IO) {
@@ -173,20 +181,61 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun showCreateUpdateTaskBottomSheet() {
-        val createTaskBottomSheet = CreateTaskBottomSheet(categoriess)
-        { taskToBeCreated ->
-            val taskEntityToBeInsert = TaskEntity(
-                id = taskToBeCreated.id, //cuidado com essa porra
-                name = taskToBeCreated.name,
-                category = taskToBeCreated.category
-            )
-            insertTask(taskEntityToBeInsert)
+    private fun updateTask(taskEntity: TaskEntity) {
+        GlobalScope.launch(Dispatchers.IO) {
+            taskDao.update(taskEntity)
+            getTasksFromDataBase()
         }
+    }
+
+    private fun deleteTask(taskEntity: TaskEntity) {
+        GlobalScope.launch(Dispatchers.IO) {
+            taskDao.delete(taskEntity)
+            getTasksFromDataBase()
+        }
+    }
+
+    private fun deleteCategory(categoryEntity: CategoryEntity) {
+        GlobalScope.launch(Dispatchers.IO) {
+            categoryDao.delete(categoryEntity)
+            getCategoriesFromDataBase()
+        }
+    }
+
+    private fun showCreateUpdateTaskBottomSheet(taskUiData: TaskUiData? = null) {
+        val createTaskBottomSheet = CreateOrUpdateTaskBottomSheet(
+            task = taskUiData,
+            categoryList = categoriess,
+            onCreateClicked = { taskToBeCreated ->
+                val taskEntityToBeInsert = TaskEntity(
+                    name = taskToBeCreated.name,
+                    category = taskToBeCreated.category
+                )
+                insertTask(taskEntityToBeInsert)
+            },
+            onUpdateClicked = { taskToBeUpdated ->
+                val taskEntityToBeUpdate = TaskEntity(
+                    id = taskToBeUpdated.id, //cuidado com essa porra
+                    name = taskToBeUpdated.name,
+                    category = taskToBeUpdated.category
+                )
+
+                updateTask(taskEntityToBeUpdate)
+            },
+            onDeleteClicked = { taskToBeDeleted ->
+                val taskEntityToBeDeleted = TaskEntity(
+                    id = taskToBeDeleted.id,
+                    name = taskToBeDeleted.name,
+                    category = taskToBeDeleted.category
+                )
+                deleteTask(taskEntityToBeDeleted)
+            }
+        )
         createTaskBottomSheet.show(supportFragmentManager, "createTaskBottomSheet")
     }
 }
 
+//
 val categories: List<CategoryUiData> = listOf(
     //Lista vazia pra testar se o dado foi pro DB mesmo.
     CategoryUiData(
@@ -239,57 +288,57 @@ val categories: List<CategoryUiData> = listOf(
 val tasks = listOf(
     TaskUiData(
         0,
-        "Ler 10 páginas do livro atual",
+        "01 - Ler 10 páginas do livro atual",
         "STUDY",
     ),
     TaskUiData(
-        1,
-        "45 min de treino na academia",
+        0,
+        "02 - 45 min de treino na academia",
         "HEALTH",
     ),
     TaskUiData(
-        2,
-        "Correr 5km",
+        0,
+        "03 - Correr 5km",
         "HEALTH",
     ),
     TaskUiData(
-        3,
-        "Meditar por 10 min",
+        0,
+        "04 - Meditar por 10 min",
         "WELLNESS",
     ),
     TaskUiData(
-        4,
-        "Silêncio total por 5 min",
+        0,
+        "05 - Silêncio total por 5 min",
         "WELLNESS",
     ),
     TaskUiData(
-        5,
-        "Descer o livo",
+        0,
+        "06 - Descer o livo",
         "HOME",
     ),
     TaskUiData(
-        6,
-        "Tirar caixas da garagem",
+        0,
+        "07 - Tirar caixas da garagem",
         "HOME",
     ),
     TaskUiData(
-        7,
-        "Lavar o carro",
+        0,
+        "08 - Lavar o carro",
         "HOME",
     ),
     TaskUiData(
-        8,
-        "Gravar aulas DevSpace",
+        0,
+        "09 - Gravar aulas DevSpace",
         "WORK",
     ),
     TaskUiData(
-        9,
-        "Criar planejamento de vídeos da semana",
+        0,
+        "10 - Criar planejamento de vídeos da semana",
         "WORK",
     ),
     TaskUiData(
-        10,
-        "Soltar reels da semana",
+        0,
+        "11 - Soltar reels da semana",
         "WORK",
     ),
 )
