@@ -1,5 +1,5 @@
 package com.devspace.taskbeats
-//Onde parei? Terminei aula 17, devo iniciar a 18
+//Onde parei? Terminei aula 18, devo iniciar a 19
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.recyclerview.widget.RecyclerView
@@ -51,9 +51,19 @@ class MainActivity : AppCompatActivity() {
         }
 
         categoryAdapter.setOnLongClickListener { categoryToBeDeleted ->
-            val categoryEntityToBeDeleted =
-                CategoryEntity(categoryToBeDeleted.name, categoryToBeDeleted.isSelected)
-            deleteCategory(categoryEntityToBeDeleted)
+            if (categoryToBeDeleted.name != "+") {
+                val title: String = this.getString(R.string.category_delete_title)
+                val desc: String = this.getString(R.string.category_delete_description)
+                val btnText: String = this.getString(R.string.delete)
+                showInfoDialog(
+                    title, desc, btnText
+                )
+                {
+                    val categoryEntityToBeDeleted =
+                        CategoryEntity(categoryToBeDeleted.name, categoryToBeDeleted.isSelected)
+                    deleteCategory(categoryEntityToBeDeleted)
+                }
+            }
         }
 
         categoryAdapter.setOnClickListener { selected ->
@@ -132,6 +142,21 @@ class MainActivity : AppCompatActivity() {
             taskDao.insertAll(tasksEntity)
         }
 
+    }
+
+    private fun showInfoDialog(
+        title: String,
+        description: String,
+        btnText: String,
+        onClick: () -> Unit
+    ) {
+        val infoBottomSheet = InfoBottomSheet(
+            title = title,
+            description = description,
+            btnText = btnText,
+            onClick
+        )
+        infoBottomSheet.show(supportFragmentManager, "infoBottomSheet")
     }
 
     private fun getCategoriesFromDataBase() {
