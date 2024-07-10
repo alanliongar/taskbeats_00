@@ -10,7 +10,12 @@ import androidx.room.PrimaryKey
     tableName = "taskentity",
     indices = [
         Index(value = ["name", "category"], unique = true)
-    ]
+    ],
+    foreignKeys = [ForeignKey(
+        entity = CategoryEntity::class,
+        parentColumns = ["key"],
+        childColumns = ["category"]
+    )]
 )
 data class TaskEntity(
     @PrimaryKey(autoGenerate = true)
