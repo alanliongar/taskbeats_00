@@ -1,5 +1,5 @@
 package com.devspace.taskbeats
-//Onde parei? Terminei aula 16, devo iniciar a 17
+//Onde parei? Terminei aula 17, devo iniciar a 18
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.recyclerview.widget.RecyclerView
@@ -48,6 +48,12 @@ class MainActivity : AppCompatActivity() {
 
         taskAdapter.setOnClickListener { task ->
             showCreateUpdateTaskBottomSheet(task)
+        }
+
+        categoryAdapter.setOnLongClickListener { categoryToBeDeleted ->
+            val categoryEntityToBeDeleted =
+                CategoryEntity(categoryToBeDeleted.name, categoryToBeDeleted.isSelected)
+            deleteCategory(categoryEntityToBeDeleted)
         }
 
         categoryAdapter.setOnClickListener { selected ->
@@ -186,6 +192,13 @@ class MainActivity : AppCompatActivity() {
         GlobalScope.launch(Dispatchers.IO) {
             taskDao.delete(taskEntity)
             getTasksFromDataBase()
+        }
+    }
+
+    private fun deleteCategory(categoryEntity: CategoryEntity) {
+        GlobalScope.launch(Dispatchers.IO) {
+            categoryDao.delete(categoryEntity)
+            getCategoriesFromDataBase()
         }
     }
 
