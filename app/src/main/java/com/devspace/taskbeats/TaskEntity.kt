@@ -25,4 +25,3 @@ data class TaskEntity(
     @ColumnInfo
     val category: String
 )
-
