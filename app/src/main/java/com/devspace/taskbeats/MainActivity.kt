@@ -1,5 +1,5 @@
 package com.devspace.taskbeats
-//Onde parei? Terminei aula 20, devo iniciar a 21
+//Onde parei? Terminei aula 21, devo iniciar a 22
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.recyclerview.widget.RecyclerView
@@ -88,11 +88,12 @@ class MainActivity : AppCompatActivity() {
 
                 val taskTemp =
                     if (selected.name != "ALL") {
-                        taskss.filter { it.category == selected.name }
+                        filterTaskByCategoryName(selected.name)
                     } else {
-                        taskss
+                        GlobalScope.launch(Dispatchers.IO) {
+                            getTasksFromDataBase()
+                        }
                     }
-                taskAdapter.submitList(taskTemp)
                 categoryAdapter.submitList(categoryTemp)
             }
         }
@@ -225,6 +226,17 @@ class MainActivity : AppCompatActivity() {
             categoryDao.delete(categoryEntity)
             getCategoriesFromDataBase()
             getTasksFromDataBase()
+        }
+    }
+
+    private fun filterTaskByCategoryName(category: String) {
+        GlobalScope.launch(Dispatchers.IO) {
+            val tasksFromDb: List<TaskEntity> = taskDao.getAllByCategoryName(category)
+            val tasksUiData: List<TaskUiData> =
+                tasksFromDb.map { TaskUiData(id = it.id, name = it.name, category = it.category) }
+            GlobalScope.launch(Dispatchers.Main) {
+                taskAdapter.submitList(tasksUiData)
+            }
         }
     }
 
