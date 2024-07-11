@@ -1,5 +1,5 @@
 package com.devspace.taskbeats
-//Onde parei? Terminei aula 22, devo iniciar a 23
+//Onde parei? Terminei aula 23, devo iniciar a 24
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.recyclerview.widget.RecyclerView
@@ -11,6 +11,7 @@ import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
     private var categoriess = listOf<CategoryUiData>()
+    private var categoriesEntity = listOf<CategoryEntity>()
     private var taskss = listOf<TaskUiData>()
     private val taskAdapter by lazy {
         TaskListAdapter()
@@ -160,6 +161,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun getCategoriesFromDataBase() {
         val categoriesFromDb: List<CategoryEntity> = categoryDao.getAll()
+        categoriesEntity = categoriesFromDb
         val categoriesUiData =
             categoriesFromDb.map { //Aqui é o contrário do que está sendo feito na linha 64: estamos pegando do banco de dados e puxando pra lista de novo.
                 CategoryUiData(name = it.name, isSelected = it.isSelected)
@@ -243,7 +245,7 @@ class MainActivity : AppCompatActivity() {
     private fun showCreateUpdateTaskBottomSheet(taskUiData: TaskUiData? = null) {
         val createTaskBottomSheet = CreateOrUpdateTaskBottomSheet(
             task = taskUiData,
-            categoryList = categoriess,
+            categoryList = categoriesEntity,
             onCreateClicked = { taskToBeCreated ->
                 val taskEntityToBeInsert = TaskEntity(
                     name = taskToBeCreated.name,
