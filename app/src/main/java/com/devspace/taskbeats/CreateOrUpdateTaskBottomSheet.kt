@@ -39,10 +39,10 @@ class CreateOrUpdateTaskBottomSheet(
         val categoryStr: List<String> = categoryListTemp
         ArrayAdapter(
             requireActivity().baseContext,
-            android.R.layout.simple_spinner_item,
+            R.layout.item_spinner,
             categoryStr.toList()
         ).also { adapter ->
-            adapter.setDropDownViewResource(android.R.layout.simple_spinner_item)
+            adapter.setDropDownViewResource(R.layout.item_spinner)
             catSpin.adapter = adapter
         }
         catSpin.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
