@@ -108,8 +108,7 @@ class CreateOrUpdateTaskBottomSheet(
                     Log.d("CreateOrUpdateTaskBottomSheet", "Task not found")
                 }
             }
-            val currentCategory = categoryList.first { it.name == task.category }
-            catSpin.setSelection(categoryList.indexOf(currentCategory))
+            catSpin.setSelection(categoryStr.indexOf(task.category))
         }
         return view
     }
