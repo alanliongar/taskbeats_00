@@ -42,6 +42,41 @@
         app:layout_constraintTop_toBottomOf="@+id/rv_categories"
         tools:listitem="@layout/item_task" />
 
+    <LinearLayout
+        android:id="@+id/ll_empty_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/empty_category_title"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/empty_category_description"
+            android:textSize="18sp"
+            android:textStyle="" />
+
+        <ImageView
+            android:layout_width="250dp"
+            android:layout_height="300dp"
+            android:src="@drawable/ic_empty_list" />
+
+        <Button
+            android:id="@+id/btn_create_empty"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:text="@string/create" />
+
+    </LinearLayout>
+
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_create_task"
         android:layout_width="wrap_content"
