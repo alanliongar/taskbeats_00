@@ -1,5 +1,5 @@
 package com.devspace.taskbeats
-//Onde parei? Terminei aula 11 e parei nos 13:30 da aula 12 - que é click na lista de tarefas. ele vai debugar o código agora.
+//Onde parei? Terminei aula 13 e devo iniciar a aula 14
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.recyclerview.widget.RecyclerView
@@ -12,7 +12,7 @@ import kotlinx.coroutines.launch
 class MainActivity : AppCompatActivity() {
     private var categoriess = listOf<CategoryUiData>()
     private var taskss = listOf<TaskUiData>()
-    private val taskAdapter by lazy{
+    private val taskAdapter by lazy {
         TaskListAdapter()
     }
     private val categoryAdapter = CategoryListAdapter()
@@ -44,6 +44,10 @@ class MainActivity : AppCompatActivity() {
         val fabCreateTask = findViewById<FloatingActionButton>(R.id.fab_create_task)
         fabCreateTask.setOnClickListener {
             showCreateUpdateTaskBottomSheet()
+        }
+
+        taskAdapter.setOnClickListener { task ->
+            showCreateUpdateTaskBottomSheet(task)
         }
 
         categoryAdapter.setOnClickListener { selected ->
@@ -85,9 +89,7 @@ class MainActivity : AppCompatActivity() {
             getCategoriesFromDataBase()
         }
         rvTask.adapter = taskAdapter
-        taskAdapter.setOnClickListener {
-            showCreateUpdateTaskBottomSheet()
-        }
+
 
         //categoryAdapter.submitList(categories)
         GlobalScope.launch(Dispatchers.IO) {
@@ -173,20 +175,37 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun showCreateUpdateTaskBottomSheet() {
-        val createTaskBottomSheet = CreateTaskBottomSheet(categoriess)
-        { taskToBeCreated ->
-            val taskEntityToBeInsert = TaskEntity(
-                id = taskToBeCreated.id, //cuidado com essa porra
-                name = taskToBeCreated.name,
-                category = taskToBeCreated.category
-            )
-            insertTask(taskEntityToBeInsert)
+    private fun updateTask(taskEntity: TaskEntity){
+        GlobalScope.launch(Dispatchers.IO){
+            taskDao.update(taskEntity)
+            getTasksFromDataBase()
         }
+    }
+
+    private fun showCreateUpdateTaskBottomSheet(taskUiData: TaskUiData? = null) {
+        val createTaskBottomSheet = CreateOrUpdateTaskBottomSheet(
+            task = taskUiData,
+            categoryList = categoriess,
+            onCreateClicked = { taskToBeCreated ->
+                val taskEntityToBeInsert = TaskEntity(
+                    name = taskToBeCreated.name,
+                    category = taskToBeCreated.category
+                )
+                insertTask(taskEntityToBeInsert)
+            },
+            onUpdateClicked = { taskToBeUpdated ->
+                val taskEntityToBeUpdate = TaskEntity(
+                    id = taskToBeUpdated.id, //cuidado com essa porra
+                    name = taskToBeUpdated.name,
+                    category = taskToBeUpdated.category)
+
+                updateTask(taskEntityToBeUpdate)
+            }
+        )
         createTaskBottomSheet.show(supportFragmentManager, "createTaskBottomSheet")
     }
 }
-
+////Estou Enviando o código
 val categories: List<CategoryUiData> = listOf(
     //Lista vazia pra testar se o dado foi pro DB mesmo.
     CategoryUiData(
