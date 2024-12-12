@@ -1,5 +1,5 @@
 # Taskbeats
-Esse projeto é um aplicativo android nativo, desenvolvido com a linguagem de programação Kotlin, tem como principal funcionalidade ajudar o usuário a fazer uma gestão de tarefas.
+This project is a native Android application developed using the Kotlin programming language. Its main functionality is to help users manage their tasks effectively.
 
 ## :camera_flash: Screenshots
 <p float="left">
@@ -9,7 +9,7 @@ Esse projeto é um aplicativo android nativo, desenvolvido com a linguagem de pr
   <img src="https://github.com/alanliongar/taskbeats_00/blob/main/Taskbeat04.png" width="200" />
 </p>
 
-## Tecnologias
+## Technologies
 - Activity
 - Snackbar
 - Room Database
